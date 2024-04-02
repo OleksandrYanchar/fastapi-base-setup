@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/app
+    depends_on:
+      - backend
+    networks:
+      - alx-network
+
+  backend:
+    container_name: backend
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: 'sh -c "alembic upgrade head && python app/main.py --host 0.0.0.0 --port 8000"'
+    depends_on:
+      - db
+      - redis-cache
+    networks:
+      - alx-network
+      
+
+  db:
+    container_name: db
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - alx-network
+      
+
+  adminer:
+      image: adminer
+      ports:
+        - 5051:8080
+      environment:
+        ADMINER_DEFAULT_SERVER: db
+      depends_on:
+        - db
+      networks:
+        - alx-network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5050:80"
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
+    depends_on:
+      - db
+    networks:
+      - alx-network
+
+volumes:
+  postgres_data:
+networks:
+  alx-network:

@@ -1,0 +1,13 @@
+fastapi
+fastapi-mail
+python-dotenv
+sqlalchemy
+uvicorn[standard]
+PyJWT
+asyncpg
+psycopg2-binary
+passlib
+alembic
+python-jose
+pyhumps
+aiosqlite
