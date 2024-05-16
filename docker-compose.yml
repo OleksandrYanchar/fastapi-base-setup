@@ -17,7 +17,7 @@ services:
     depends_on:
       - backend
     networks:
-      - alx-network
+      - fastapi-network
 
   backend:
     container_name: backend
@@ -31,14 +31,14 @@ services:
       - .:/app
     command: 'sh -c "alembic upgrade head && python app/main.py --host 0.0.0.0 --port 8000"'
     depends_on:
-      - db
+      - fastapi-db
       - redis-cache
     networks:
-      - alx-network
+      - fastapi-network
       
 
-  db:
-    container_name: db
+  fastapi-db:
+    container_name: fastapi-db
     image: postgres:15
     restart: always
     env_file:
@@ -52,19 +52,91 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - alx-network
+      - fastapi-network
       
+  redis-cache:
+    image: redis:alpine
+    hostname: redis-cache
+    container_name: redis-cache
+    restart: on-failure
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes:
+      - cache:/data
+    networks:
+      - fastapi-network
+      
+  celery-worker:
+    container_name: celery-worker
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile  
+    command: celery -A app.tasks.configs worker --loglevel=info
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - .:/app
+    depends_on:
+      - fastapi-db
+      - redis-cache
+    networks:
+      - fastapi-network
+      
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    command: celery -A app.tasks.configs beat --loglevel=info
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - .:/app
+    depends_on:
+      - fastapi-db
+      - redis-cache
+    networks:
+      - fastapi-network
+
+  flower:
+    container_name: flower
+    build: 
+      context: .
+      dockerfile: ./docker/app/Dockerfile     
+    command: celery -A app.tasks.configs flower
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    depends_on:
+      - backend
+      - redis-cache
+      - celery-worker
+    networks:
+      - fastapi-network
 
   adminer:
       image: adminer
       ports:
         - 5051:8080
       environment:
-        ADMINER_DEFAULT_SERVER: db
+        ADMINER_DEFAULT_SERVER: fastapi-db
       depends_on:
-        - db
+        - fastapi-db
       networks:
-        - alx-network
+        - fastapi-network
 
   pgadmin:
     container_name: pgadmin
@@ -79,11 +151,11 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
     depends_on:
-      - db
+      - fastapi-db
     networks:
-      - alx-network
-
+      - fastapi-network
 volumes:
   postgres_data:
+  cache:
 networks:
-  alx-network:
+  fastapi-network:
