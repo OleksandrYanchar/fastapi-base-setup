@@ -1,5 +1,8 @@
+celery
 fastapi
+fastapi-cache2[redis]
 fastapi-mail
+flower
 python-dotenv
 sqlalchemy
 uvicorn[standard]
@@ -11,3 +14,4 @@ alembic
 python-jose
 pyhumps
 aiosqlite
+ujson
