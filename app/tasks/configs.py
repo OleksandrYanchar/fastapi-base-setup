@@ -1,5 +1,4 @@
 from celery import Celery
-from celery.schedules import crontab
 
 from configs.db import REDIS_PORT, REDIS_HOST
 
@@ -11,3 +10,5 @@ celery_app = Celery(
 
 # Optional configuration, for example timezone
 celery_app.conf.update(timezone="UTC")
+
+celery_app.autodiscover_tasks(["tasks.files"], force=True)
