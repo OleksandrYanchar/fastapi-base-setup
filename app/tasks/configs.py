@@ -1,6 +1,5 @@
 from celery import Celery
-
-from configs.db import REDIS_PORT, REDIS_HOST
+from configs.db import REDIS_HOST, REDIS_PORT
 
 celery_app = Celery(
     "tasks",

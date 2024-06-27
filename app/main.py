@@ -1,15 +1,14 @@
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import UJSONResponse
 from api.v1.routers import router as v1_router
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from configs.db import REDIS_URL
 from configs.general import MEDIA_DIR
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import UJSONResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
-
 
 app = FastAPI(
     title="FastAPI Starter Project",

@@ -2,12 +2,11 @@ import os
 from typing import Any, Dict
 
 import humps
+from configs.general import DEBUG_MODE
 from dotenv import load_dotenv
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-
-from configs.general import DEBUG_MODE
 
 load_dotenv()
 """Postgres database connection setup"""
@@ -26,11 +25,12 @@ REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 
 # Create an asynchronous engine for the database
-engine = create_async_engine(DATABASE_URL,
-                            echo=DEBUG_MODE,
-                            pool_size=10,
-                            max_overflow=10,
-                            )
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=DEBUG_MODE,
+    pool_size=10,
+    max_overflow=10,
+)
 
 
 # Define a base class for the SQLAlchemy models

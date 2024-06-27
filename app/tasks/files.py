@@ -1,7 +1,8 @@
 import os
-from tasks.configs import celery_app
 import secrets
+
 from PIL import Image
+from tasks.configs import celery_app
 
 
 @celery_app.task
