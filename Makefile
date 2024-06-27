@@ -21,13 +21,15 @@ stop:
 
 
 bash:
-	sudo docker exec -it auto-backend bash
+	sudo docker exec -it backend bash
 
 clean:
 	sudo docker-compose down -v
 
 format:
-	black app/ 
+	isort app/
+	black app/
+	flake8 app/ 
 
 create:
 	python3 -m venv venv
@@ -43,13 +45,13 @@ req-b:
 .PHONY: alembic-revision alembic-upgrade
 
 alembic-revision:
-	sudo docker exec -it auto-backend alembic revision --autogenerate
+	sudo docker exec -it backend alembic revision --autogenerate
 
 alembic-upgrade:
-	sudo docker exec -it auto-backend alembic upgrade head
+	sudo docker exec -it backend alembic upgrade head
 
 alembic-downgrade :
-	sudo docker exec -it auto-backend alembic downgrade base
+	sudo docker exec -it backend alembic downgrade base
 
 psql:
 	docker exec -it fastapi-db psql -U test -d postgres
