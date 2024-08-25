@@ -38,7 +38,7 @@ def init_logger(file_path):
 
     # Create file handlers for the module
     general_handler = logging.FileHandler(general_log_path)
-    general_handler.setLevel(logging.DEBUG)  # Capture all levels of logs
+    general_handler.setLevel(logging.INFO)  # Capture all levels of logs
     general_handler.setFormatter(
         logging.Formatter(config["formatters"]["standard"]["format"])
     )
@@ -51,9 +51,7 @@ def init_logger(file_path):
 
     # Create console handler for the terminal
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(
-        logging.INFO
-    )  # Capture INFO level and above for the console
+    console_handler.setLevel(logging.DEBUG)  # Capture DEBUG level for the console
     console_handler.setFormatter(
         logging.Formatter(config["formatters"]["standard"]["format"])
     )
@@ -71,10 +69,3 @@ def init_logger(file_path):
     logger.debug(f"{module_name} logger was initialized")
 
     return logger
-
-
-# Example usage in different files
-if __name__ == "__main__":
-    logger = init_logger(__file__)
-    logger.info("This is an info message")
-    logger.error("This is an error message")
