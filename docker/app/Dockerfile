@@ -12,8 +12,6 @@ RUN pip install -r requirements/dev.txt
 # Copy the rest of your application
 COPY . /app/
 
-# Set PYTHONPATH to ensure Python imports work correctly
-ENV PYTHONPATH /app/app
-
+ENV PYTHONPATH="/app"
 
 WORKDIR /app/
