@@ -32,7 +32,6 @@ services:
     command: 'sh -c "alembic upgrade head && python app/main.py --host 0.0.0.0 --port 8000"'
     depends_on:
       - fastapi-db
-      - redis-cache
     networks:
       - fastapi-network
       
@@ -54,79 +53,6 @@ services:
     networks:
       - fastapi-network
       
-  redis-cache:
-    image: redis:alpine
-    hostname: redis-cache
-    container_name: redis-cache
-    restart: on-failure
-    ports:
-      - '6379:6379'
-    command: redis-server
-    volumes:
-      - cache:/data
-    networks:
-      - fastapi-network
-      
-  celery-worker:
-    container_name: celery-worker
-    build:
-      context: .
-      dockerfile: ./docker/app/Dockerfile  
-    command: celery -A app.tasks.configs worker --loglevel=info
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-    volumes:
-      - .:/app
-    depends_on:
-      - fastapi-db
-      - redis-cache
-    networks:
-      - fastapi-network
-      
-  celery-beat:
-    container_name: celery-beat
-    build:
-      context: .
-      dockerfile: ./docker/app/Dockerfile
-    command: celery -A app.tasks.configs beat --loglevel=info
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-    volumes:
-      - .:/app
-    depends_on:
-      - fastapi-db
-      - redis-cache
-    networks:
-      - fastapi-network
-
-  flower:
-    container_name: flower
-    build: 
-      context: .
-      dockerfile: ./docker/app/Dockerfile     
-    command: celery -A app.tasks.configs flower
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-    volumes:
-      - .:/app
-    ports:
-      - "5555:5555"
-    depends_on:
-      - backend
-      - redis-cache
-      - celery-worker
-    networks:
-      - fastapi-network
-
   adminer:
       image: adminer
       ports:
@@ -140,6 +66,5 @@ services:
 
 volumes:
   postgres_data:
-  cache:
 networks:
   fastapi-network:
