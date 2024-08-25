@@ -27,9 +27,9 @@ clean:
 	sudo docker-compose down -v
 
 format:
-	isort app/
-	black app/
-	flake8 app/ 
+	sudo docker exec -it backend isort app/
+	sudo docker exec -it backend black app/
+	sudo docker exec -it backend flake8 app/ 
 
 create:
 	python3 -m venv venv
