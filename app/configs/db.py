@@ -2,11 +2,12 @@ import os
 from typing import Any, Dict
 
 import humps
-from configs.general import DEBUG_MODE
 from dotenv import load_dotenv
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
+
+from app.configs.general import DEBUG_MODE
 
 load_dotenv()
 """Postgres database connection setup"""
@@ -16,13 +17,6 @@ DB_USER = os.getenv("DB_USER")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-"""Redis connection setup"""
-REDIS_HOST = os.getenv("REDIS_HOST")
-REDIS_PORT = os.getenv("REDIS_PORT")
-
-REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
-
 
 # Create an asynchronous engine for the database
 engine = create_async_engine(
