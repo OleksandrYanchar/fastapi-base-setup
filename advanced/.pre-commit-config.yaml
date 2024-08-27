@@ -1,0 +1,45 @@
+fail_fast: false
+exclude: ^.*\b(migrations)\b.*$
+repos:
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.31.1
+    hooks:
+    - id: pyupgrade
+      args: [--py38-plus]
+      stages: [commit]
+
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v3.1.0
+    hooks:
+    - id: add-trailing-comma
+      stages: [pre-commit]
+      exclude: ^advanced/app/postgresql/models/annotes\.py$
+
+  - repo: https://github.com/myint/autoflake
+    rev: v2.2.1
+    hooks:
+    - id: autoflake
+      args: [
+        --in-place,
+        --remove-all-unused-imports,
+        --ignore-init-module-imports,
+        --remove-unused-variables,
+      ]
+      stages: [commit]
+
+  - repo: https://github.com/myint/docformatter
+    rev: v1.7.5
+    hooks:
+    - id: docformatter
+      args: [
+        --in-place,
+        --blank,
+      ]
+      stages: [commit]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+    - id: ruff-format
+      stages: [commit-msg]
+      args: [--fix]
