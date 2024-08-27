@@ -4,6 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.postgresql.models.base import BaseORM
 from app.postgresql.models.annotes import unique_str_255, uuidpk
 
+
 class Users(BaseORM):
     __tablename__ = "users"
 
