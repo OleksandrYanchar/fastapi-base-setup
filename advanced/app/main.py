@@ -6,6 +6,10 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.routers import router as users_router
 from app.configs import settings
+from app.admin.views import UsersModelView
+from sqladmin import Admin
+from app.postgresql.database import database
+
 
 app = FastAPI(
     title="FastAPI Starter Project",
@@ -16,6 +20,10 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     default_response_class=UJSONResponse,
 )
+
+admin = Admin(app, database._async_engine)
+
+admin.add_view(UsersModelView)
 
 app.include_router(users_router)
 
