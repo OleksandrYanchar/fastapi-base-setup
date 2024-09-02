@@ -52,3 +52,6 @@ class Database:
             raise
         finally:
             await session.close()
+
+
+database = Database(settings.POSTGRES_DB_URL, settings.POSTGRES_DB_URL)
