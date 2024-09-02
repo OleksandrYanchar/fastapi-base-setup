@@ -11,7 +11,7 @@ class Users(BaseORM):
     id: Mapped[uuidpk]
 
     username: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    emalil: Mapped[unique_str_255]
+    email: Mapped[unique_str_255]
 
     password: Mapped[str] = mapped_column(String, nullable=False)
     first_name: Mapped[str] = mapped_column(String(64), nullable=False)
