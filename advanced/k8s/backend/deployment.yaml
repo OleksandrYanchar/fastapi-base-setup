@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-backend
+  namespace: fastapi-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-backend
+  template:
+    metadata:
+      labels:
+        app: fastapi-backend
+    spec:
+      containers:
+      - name: fastapi-backend
+        image: sa1ntqqe/test_k8s:backend
+        ports:
+        - containerPort: 8000
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: POSTGRES_HOST
+        - name: POSTGRES_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: POSTGRES_PORT
+        - name: EMAIL_HOST_USER
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: EMAIL_HOST_USER
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: EMAIL_HOST_PASSWORD
+        - name: EMAIL_HOST_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: EMAIL_HOST_USERNAME
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: SECRET
+        - name: REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: REFRESH_SECRET
+        - name: ALGORITHM
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: ALGORITHM
+        - name: ACCESS_TOKEN_EXPIRE_MINUTES
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: ACCESS_TOKEN_EXPIRE_MINUTES
+        - name: REFRESH_TOKEN_EXPIRE_DAYS
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: REFRESH_TOKEN_EXPIRE_DAYS
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DEBUG
+        - name: LOG_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: LOG_DIR
+        - name: MEDIA_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MEDIA_DIR
+        command: ["sh", "-c", "alembic upgrade head && python app/main.py --host 0.0.0.0 --port 8000"]

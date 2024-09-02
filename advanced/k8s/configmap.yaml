@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: fastapi-namespace
+data:
+  POSTGRES_DB: fastapi
+  POSTGRES_USER: fastapi
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  
+  EMAIL_HOST_USER: 
+  EMAIL_HOST_USERNAME: 
+  
+  ALGORITHM: HS256
+  
+  ACCESS_TOKEN_EXPIRE_MINUTES: "700000"
+  REFRESH_TOKEN_EXPIRE_DAYS: "60"
+  
+  DEBUG: "1"
+  
+  LOG_DIR: logs
+  MEDIA_DIR: media/
