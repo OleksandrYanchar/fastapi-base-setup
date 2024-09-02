@@ -1,3 +1,24 @@
+NAMESPACE=fastapi-namespace
+
+# Build and Deployment
+kuber-build:
+	./deploy.sh
+
+# Delete Namespace and Volumes
+kuber-delete:
+	kubectl delete namespace $(NAMESPACE)
+
+# PostgreSQL Commands
+kuber-psql:
+	kubectl exec -it $(POD_NAME_POSTGRES) -n $(NAMESPACE) -- psql -U fastapi -d postgres
+
+# Backend Bash Access
+.PHONY: backend-bash
+
+kuber-bash:
+	kubectl exec -it $(POD_NAME_BACKEND) -n $(NAMESPACE) -- bash
+
+
 up-build:
 	sudo docker-compose build
 	sudo docker-compose up
@@ -54,4 +75,4 @@ alembic-downgrade :
 	sudo docker exec -it backend alembic downgrade base
 
 psql:
-	docker exec -it fastapi-db psql -U test -d postgres
+	docker exec -it fastapi-db psql -U fastapi -d postgres
